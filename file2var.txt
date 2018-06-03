@@ -1,0 +1,6 @@
+int,9
+float,0
+double,0
+bool,2
+string,9
+char,4
