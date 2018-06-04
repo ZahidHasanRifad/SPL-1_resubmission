@@ -1,6 +1,6 @@
-int,22
-float,0
-double,19
-bool,0
-string,29
-char,0
+int 22
+float 0
+double 19
+bool 0
+string 29
+char 0

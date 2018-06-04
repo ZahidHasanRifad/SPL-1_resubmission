@@ -445,7 +445,7 @@ void makefilewithvariable(string filename, string dstfilename)
     {
         for(int i=0; i<totalvariables.size(); i++)
         {
-            ofile << totalvariables[i].first << "," << totalvariables[i].second << endl;
+            ofile << totalvariables[i].first << " " << totalvariables[i].second << endl;
         }
     }
     else cout << "can't write to variable file" << endl;
@@ -474,13 +474,90 @@ void makefilewithfunction(string filename, string dstfilename)
     {
         for(map<string, int>:: iterator it = fcounts.begin(); it!=fcounts.end(); it++)
         {
-            ofile << it->first << "," << it->second << endl;
+            ofile << it->first << " " << it->second << endl;
         }
     }
     else cout << "can't write to functions file." << endl;
 
 
 }
+
+
+vector<int> GetSubValueofVariable(vector<pair<string, int> > file1, vector<pair<string, int> >file2)
+{
+    int subtraction;
+    vector<int> subvalue;
+    for(int i=0; i<file1.size(); i++)
+    {
+        subvalue.push_back(fabs(file1[i].second - file2[i].second));
+    }
+    return subvalue;
+}
+
+
+vector<pair<string, int> > getLineofFunction(vector<pair<string, pair<int, int> > >startAndEndLine)
+{
+    vector<pair<string, int> > lineoffunction;
+    string funcname;
+    int s,e;
+    for(int i=0; i<startAndEndLine.size(); i++)
+    {
+        funcname = startAndEndLine[i].first;
+        s = startAndEndLine[i].second.first;
+        e = startAndEndLine[i].second.second;
+        lineoffunction.push_back(make_pair(funcname, e-s));
+    }
+    return lineoffunction;
+}
+
+
+vector<int> GetSubValueofFunction(vector<pair<string, int> > file1, vector<pair<string, int> >file2)
+{
+    int subtraction;
+    vector<int> subvalue;
+    int j=0;
+    for(int i=0; i<file1.size() && j<file2.size(); i++)
+    {
+
+        if(file1[i] == file2[j])
+        {
+            subvalue.push_back(fabs(file1[i].second - file2[i].second));
+        }
+        j++;
+    }
+    return subvalue;
+}
+
+
+vector<string> getSimilarLineInsideFunction(vector<pair<string, pair<int, int> > >startAndEndLinefile1, vector<pair<string, pair<int, int> > >startAndEndLinefile2,
+                                             vector<string> totallineoffile1, vector<string> totallineoffile2)
+{
+    vector<string> similarLine;
+    string funcname1, funcname2;
+    int s,e;
+    for(int i=0; i<startAndEndLinefile1.size(); i++)
+    {
+        funcname1 = startAndEndLinefile1[i].first;
+        s = startAndEndLinefile1[i].second.first;
+        e = startAndEndLinefile1[i].second.second;
+        for(int j=0; j<startAndEndLinefile2.size(); j++)
+        {
+            funcname2 = startAndEndLinefile2[j].first;
+            if(funcname1 == funcname2)
+            {
+                for(int k=s; k<e; k++)
+                {
+                    if( (totallineoffile1[k] !="") && (totallineoffile1[k] == totallineoffile2[k]))
+                    {
+                        similarLine.push_back(totallineoffile1[k]);
+                    }
+                }
+            }
+        }
+    }
+    return similarLine;
+}
+
 
 int main (void)
 {
@@ -490,35 +567,43 @@ int main (void)
     makefilewithvariable(filename2, "file2var.txt");
     makefilewithfunction(filename1, "file1func.txt");
     makefilewithfunction(filename2, "file2func.txt");
-/*
-    vector<string> lines;
+
+    vector<string> lines1;
+    vector<string> lines2;
     vector<string> functions;
     vector<string> words;
     map<string, int> fcounts;
-    vector<pair<string, int> > variables;
-    vector<pair<string, int> > totalvariables;
+    vector<pair<string, int> > variables1;
+    vector<pair<string, int> > variables2;
+    vector<pair<string, int> > totalvariables1;
+    vector<pair<string, int> > totalvariables2;
+    vector<int> subvalueofvariable;
     //map<string, int> vcounts;
     vector<pair<string, pair<int, int> > > lineofeachfunction;
     int numberOfLine;
-    numberOfLine = getNumberOfLine(filename);
-    lines = getTotalLine(filename);
+    //numberOfLine = getNumberOfLine(filename);
+    lines1 = getTotalLine(filename1);
+    lines2 = getTotalLine(filename2);
     //functions = getfunctions(lines);
     //words = getTotalWords(filename);
     //fcounts = wordFrequency(functions);
-    variables = getVariable(lines);
-    totalvariables = getTotalVariable(variables);
+    variables1 = getVariable(lines1);
+    variables2 = getVariable(lines2);
+    totalvariables1 = getTotalVariable(variables1);
+    totalvariables2 = getTotalVariable(variables2);
+    subvalueofvariable = GetSubValueofVariable(totalvariables1, totalvariables2);
     //vcounts = wordFrequency(variables);
     //cout << "kaj hoy" << endl;
-    lineofeachfunction = getLineOfEachFunction(lines);
+    lineofeachfunction = getLineOfEachFunction(lines1);
     //cout << " na " << endl;
 
-    for(int i=0; i<totalvariables.size(); i++)
+    for(int i=0; i<subvalueofvariable.size(); i++)
     {
-        int varcount;
-        string varname;
-        varname = totalvariables[i].first;
-        varcount = totalvariables[i].second;
-        cout << "variable name-> " << varname << " count " << varcount << endl;
+        //int varcount;
+        //string varname;
+        //varname = totalvariables[i].first;
+        //varcount = totalvariables[i].second;
+        cout << subvalueofvariable[i] << endl;
         //cout << variables[i] << endl;
     }
 
@@ -526,7 +611,7 @@ int main (void)
     //{
         //cout << it->first << "  " << it->second << endl;
     //}
-
+/*
     for(int i=0; i<lineofeachfunction.size(); i++)
     {
         int a,b;
