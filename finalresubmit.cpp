@@ -1160,7 +1160,7 @@ void compareConditions(string file1, string file2)
     elseifcount2 = getFunctionELSEIF(file2);
     switchcount2 = getFunctionSWITCH(file2);
     //for loop
-    int forcnt, whilecnt, ifcnt, elseifcnt, switchcnt;
+    int forcnt=0, whilecnt=0, ifcnt=0, elseifcnt=0, switchcnt=0;
 
     vector<pair<string,string> > accurateconditionoffor1;
     vector<pair<string,string> > accurateconditionoffor2;
@@ -1331,7 +1331,7 @@ void compareConditions(string file1, string file2)
                 switchcnt++;
             }
         }
-        cout << "else if match " << switchcnt << " times " << endl;
+        cout << "switch match " << switchcnt << " times " << endl;
         if(switchcount1.size() == switchcnt)
         {
             cout << "all switch of file1 matched to file2 " << endl;
@@ -1350,7 +1350,7 @@ void compareConditions(string file1, string file2)
                 switchcnt++;
             }
         }
-        cout << "else if match " << switchcnt << " times " << endl;
+        cout << "switch match " << switchcnt << " times " << endl;
         if(switchcount2.size() == switchcnt)
         {
             cout << "all switch of file2 matched to file1 " << endl;
@@ -1362,8 +1362,8 @@ void compareConditions(string file1, string file2)
 int main(void)
 {
     string filename1, filename2, file1,file2;
-    filename1 = "armantsk.cpp";
-    filename2 = "spl.cpp";
+    filename1 = "spl1.cpp";
+    filename2 = "spl1.cpp";
     file1 = makefileinstandardform(filename1, "stan1.txt");
     file2 = makefileinstandardform(filename2, "stan2.txt");
 
