@@ -8,9 +8,44 @@
 
 using namespace std;
 
+/*
+void makefileinstandardform(string filename, string outputfilename)
+{
+    ifstream file;
+    string fullfile,s;
+    vector<string> line;
+    file.open(filename);
+    if(file.is_open())
+    {
+        while(file>>s)
+        {
+            istringstream iss(s);
+            iss >> fullfile;
+            line.push_back(fullfile);
+        }
+    }
+    //cout << fullfile << endl;
+    //istringstream iss(fullfile);
+    //iss >> onlychars;
+    //cout << onlychars <<endl;
+    ofstream ofile;
+    ofile.open(outputfilename);
+    if(ofile.is_open())
+    {
+        for(int i=0; i<line.size(); i++)
+        {
+            //if(onlychars[i] == '{' && onlychars[i] == ';' && onlychars[i] == '}')
+            //{
+                 ofile << line[i] << endl;
 
+            //}
+            //else ofile << onlychars[i];
+        }
+    }
 
+}
 
+*/
 vector<string> readFromFileGetOnlyLine(string filename)
 {
     ifstream file;
@@ -39,6 +74,19 @@ vector<string> readFromFileGetOnlyLine(string filename)
     return line;
 }
 
+
+void makefilewithonlyline(vector<string> lines, string filename)
+{
+    ofstream file;
+    file.open(filename);
+    if(file.is_open())
+    {
+        for(int i=0; i<lines.size(); i++)
+        {
+            file << lines[i] << endl;
+        }
+    }
+}
 
 vector<string> getTotalLine(string filename)
 {
@@ -291,7 +339,7 @@ map<string, int> wordFrequency(vector<string> s)
 vector<pair<string, pair<int, int> > > getLineOfEachFunction(vector<string> line)
 {
     vector<pair<string, pair<int, int> > > linenumber;
-    int startLine, endLine;
+    int startLine, endLine, startLinesingle, endLinesingle;
     stack<string> brackets;
     stack<int> lines;
     string s,ss,str,sss;
@@ -315,13 +363,15 @@ vector<pair<string, pair<int, int> > > getLineOfEachFunction(vector<string> line
         {
             lines.push(i+1);
             brackets.push(s);
-            //cout << "pushed " << brackets.top()  << endl;
+            cout << "pushed " << brackets.top()  << endl;
+            cout << "starting line " << lines.top() << endl;
         }
         else if(!brackets.empty() && ( s == "for" || s == "while" || s == "do" || s== "if" ||s == "else" || s == "switch"))
         {
             lines.push(i+1);
             brackets.push(s);
-            //cout << "pushed " << brackets.top()  << endl;
+            cout << "pushed " << brackets.top()  << endl;
+            cout << "starting line " << lines.top() << endl;
         }
 /*
         if(line[i] == "{")
@@ -333,7 +383,11 @@ vector<pair<string, pair<int, int> > > getLineOfEachFunction(vector<string> line
                 cout << "pushed " << line[i] << endl;
             }
         }
+
+
 */
+
+
         for(int j=0; j<line[i].length(); j++)
         {
 
@@ -344,6 +398,28 @@ vector<pair<string, pair<int, int> > > getLineOfEachFunction(vector<string> line
                     //cout << "get { in the same line" << endl;
                     brackets.push("{");
                     //cout << "pushed " << brackets.top() << endl;
+                }
+            }
+
+        }
+/*
+        for(int j=0; j<line[i].length(); j++)
+        {
+            if(line[i][j] != '{')
+            {
+                if(!brackets.empty())
+                {
+                    if(brackets.size() == 1)
+                    {
+                        lines.push(i+1);
+                        endLinesingle = lines.top();
+                        lines.pop();
+                        startLinesingle = lines.top();
+                        lines.pop();
+                        ss = brackets.top();
+                        brackets.pop();
+                        linenumber.push_back(make_pair(ss, make_pair(startLinesingle, endLinesingle)));
+                    }
                 }
             }
         }
@@ -378,7 +454,7 @@ vector<pair<string, pair<int, int> > > getLineOfEachFunction(vector<string> line
         {
             if(line[i][j] == '}' && !brackets.empty())
             {
-                //cout << "pop korar age top e ase " << brackets.top() << endl;
+                cout << "pop korar age top e ase " << brackets.top() << endl;
                 if(brackets.top() == "{")
                 {
                     lines.push(i+1);
@@ -400,6 +476,31 @@ vector<pair<string, pair<int, int> > > getLineOfEachFunction(vector<string> line
                         linenumber.push_back(make_pair(ss, make_pair(startLine, endLine)));
                     }
                 }
+            }
+        }
+            /*
+            cout << "in line " << i+1 << " char pos " << j+1 << line[i][j] << endl;
+
+            if(!lines.empty() && !brackets.empty() && brackets.top() != "{" && (line[i][j] != '{'))
+            {
+               // if(brackets.top() != "{")
+                //{
+                cout << brackets.size() << " " << brackets.top() << endl;
+                cout << "inside checking if" << endl;
+                    if((brackets.top() == "for" )|| (brackets.top()== "while") || (brackets.top() == "do") ||
+                    (brackets.top() == "if") || (brackets.top() == "else") || brackets.top() == "switch")
+                    {
+                        ss = brackets.top();
+                        cout << "ss is "  << ss << endl;
+                        cout << "lines top " << lines.size() << endl;
+                        startLinesingle = lines.top();
+                        cout <<  startLinesingle << endl;
+                        lines.pop();
+                        endLinesingle = i+1;
+                        cout << "start " << startLinesingle << " end " << endLinesingle << endl;
+                         linenumber.push_back(make_pair(ss, make_pair(startLinesingle, endLinesingle)));
+                    }
+                //}
             }
         }
         //cout << "after top" << endl;
@@ -436,7 +537,7 @@ void makefilewithvariable(string filename, string dstfilename)
     vector<string> lines;
     vector<pair<string, int> > variables;
     vector<pair<string, int> > totalvariables;
-    lines = getTotalLine(filename);
+    lines = readFromFileGetOnlyLine(filename);
     variables = getVariable(lines);
     totalvariables = getTotalVariable(variables);
     ofstream ofile;
@@ -461,7 +562,7 @@ void makefilewithfunction(string filename, string dstfilename)
     vector<string> functions;
     map<string, int> fcounts;
     vector<pair<string, pair<int, int> > > lineofeachfunction;
-    lines = getTotalLine(filename);
+    lines = readFromFileGetOnlyLine(filename);
     lineofeachfunction = getLineOfEachFunction(lines);
     for(int i=0; i<lineofeachfunction.size(); i++)
     {
@@ -518,10 +619,9 @@ vector<int> GetSubValueofFunction(vector<pair<string, int> > file1, vector<pair<
     int j=0;
     for(int i=0; i<file1.size() && j<file2.size(); i++)
     {
-
-        if(file1[i] == file2[j])
+        if(file1[i].first == file2[j].first)
         {
-            subvalue.push_back(fabs(file1[i].second - file2[i].second));
+            subvalue.push_back(fabs(file1[i].second - file2[j].second));
         }
         j++;
     }
@@ -559,14 +659,42 @@ vector<string> getSimilarLineInsideFunction(vector<pair<string, pair<int, int> >
 }
 
 
+vector<pair<string, string> > getConditionofFunction(vector<string> line)
+{
+    vector<pair<string, string> > condition;
+    string rmbracket, s;
+    stack<string> cond;
+    for(int i=0;i<line.size())
+    {
+        rmbracket = removeBracket(line[i])
+        istringstream iss(rmbracket);
+        iss >> s;
+        if(s == "for" || s == "while" || s == "do" || s== "if" ||s == "else" || s == "switch")
+        {
+            cond.push(s);
+        }
+        for(int j=0; j<line[i].length(); j++)
+        {
+            if(line[i][j] == )
+        }
+
+    }
+}
+
+
 int main (void)
 {
-    string filename1 = "similarity.cpp";
+    string filename1 = "armantsk.cpp";
     string filename2 = "spl1.cpp";
+    //makefileinstandardform(filename1, "standard1.txt");
+    //makefileinstandardform(filename2, "standard2.txt");
+
     makefilewithvariable(filename1, "file1var.txt");
     makefilewithvariable(filename2, "file2var.txt");
     makefilewithfunction(filename1, "file1func.txt");
     makefilewithfunction(filename2, "file2func.txt");
+
+
 
     vector<string> lines1;
     vector<string> lines2;
@@ -579,11 +707,19 @@ int main (void)
     vector<pair<string, int> > totalvariables2;
     vector<int> subvalueofvariable;
     //map<string, int> vcounts;
-    vector<pair<string, pair<int, int> > > lineofeachfunction;
+    vector<pair<string, pair<int, int> > > lineofeachfunction1;
+    vector<pair<string, pair<int, int> > > lineofeachfunction2;
+    vector<pair<string, int> > lineoffunction1;
+    vector<pair<string, int> > lineoffunction2;
+    vector<int> subvalueoffunction;
+
+
     int numberOfLine;
     //numberOfLine = getNumberOfLine(filename);
-    lines1 = getTotalLine(filename1);
-    lines2 = getTotalLine(filename2);
+    lines1 = readFromFileGetOnlyLine(filename1);
+    lines2 = readFromFileGetOnlyLine(filename2);
+    makefilewithonlyline(lines1, "onlyline1.txt");
+    makefilewithonlyline(lines2, "onlyline2.txt");
     //functions = getfunctions(lines);
     //words = getTotalWords(filename);
     //fcounts = wordFrequency(functions);
@@ -592,9 +728,14 @@ int main (void)
     totalvariables1 = getTotalVariable(variables1);
     totalvariables2 = getTotalVariable(variables2);
     subvalueofvariable = GetSubValueofVariable(totalvariables1, totalvariables2);
+
     //vcounts = wordFrequency(variables);
     //cout << "kaj hoy" << endl;
-    lineofeachfunction = getLineOfEachFunction(lines1);
+    lineofeachfunction1 = getLineOfEachFunction(lines1);
+    lineofeachfunction2 = getLineOfEachFunction(lines2);
+    lineoffunction1 = getLineofFunction(lineofeachfunction1);
+    lineoffunction2 = getLineofFunction(lineofeachfunction2);
+    subvalueoffunction = GetSubValueofFunction(lineoffunction1, lineoffunction2);
     //cout << " na " << endl;
 
     for(int i=0; i<subvalueofvariable.size(); i++)
@@ -606,24 +747,30 @@ int main (void)
         cout << subvalueofvariable[i] << endl;
         //cout << variables[i] << endl;
     }
+    cout << endl;
+
+    for(int i=0; i<subvalueoffunction.size(); i++)
+    {
+        cout << subvalueoffunction[i] << endl;
+    }
 
     //for(map<string, int>:: iterator it = vcounts.begin(); it!= vcounts.end(); it++)
     //{
         //cout << it->first << "  " << it->second << endl;
     //}
-/*
-    for(int i=0; i<lineofeachfunction.size(); i++)
+
+    for(int i=0; i<lineofeachfunction1.size(); i++)
     {
         int a,b;
         string str;
-        str = lineofeachfunction[i].first;
-        a = lineofeachfunction[i].second.first;
-        b = lineofeachfunction[i].second.second;
+        str = lineofeachfunction1[i].first;
+        a = lineofeachfunction1[i].second.first;
+        b = lineofeachfunction1[i].second.second;
 
         cout << "str is " <<  str << endl << "Start= " << a << " End= " << b << endl;
         //cout << endl;
     }
     cout << "number of line of this code= " << numberOfLine << endl;
-    //cout << "number " << l.size() << endl;
+ /*   //cout << "number " << l.size() << endl;
 */
 }

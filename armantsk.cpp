@@ -6,8 +6,10 @@ vector<string> getlines(ifstream &file)
 {
     string line, lines, str, opas;
     vector<string> lines;
-    if(file.is_open()){
-        while(getline(file,line)){
+    if(file.is_open())
+        {
+        while(getline(file,line))
+        {
             //cout << line << endl;
             //if(line == "\n" && line == "\r")
                 //cout << line << endl;
@@ -20,7 +22,12 @@ vector<string> getlines(ifstream &file)
 
 
 	}
+	else
+        cout << "something" << endl;
 
+
+        for(int i=0;i<40; i++)
+            cout << "huhdai" << endl;
   for(int i=0; i<5; i++){
         for(int j=0; j<10; j++){
 
@@ -42,9 +49,11 @@ int main(void)
     vector<string> lines;
     lines = getlines(file);
 
-    for(int i=0; i<5; i++){
-        for(int j=0; j<10; j++){
-
+    for(int i=0; i<5; i++)
+        {
+        for(int j=0; j<10; j++)
+        {
+if() {cout jlcake;fiajf;l}
             cout << "hi everyone"<< endl;
 
 
@@ -53,7 +62,7 @@ int main(void)
     }
     for(int i=0; i<30; i++)
     {
-
+        if() {cout jlcake;fiajf;l}
     }
 
 

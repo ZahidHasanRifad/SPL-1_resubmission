@@ -1,4 +1,0 @@
-else 4
-for 7
-if 12
-while 4
