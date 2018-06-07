@@ -988,26 +988,66 @@ vector<string> getTotalfunctions(string file)
     switchcount = getFunctionSWITCH(file);
     vector<string> func;
 
-    for(int i=0; i<forcount.size(); i++)
+    if(forcount.size() == 0)
     {
-        func.push_back(forcount[i].first);
+            func.push_back("for");
     }
-    for(int i=0; i<whilecount.size(); i++)
+    else
     {
-        func.push_back(whilecount[i].first);
+        for(int i=0; i<forcount.size(); i++)
+        {
+            func.push_back(forcount[i].first);
+        }
     }
-    for(int i=0; i<ifcount.size(); i++)
+
+    if(whilecount.size() == 0)
     {
-        func.push_back(ifcount[i].first);
+            func.push_back("while");
     }
-    for(int i=0; i<elseifcount.size(); i++)
+    else
     {
-        func.push_back(elseifcount[i].first);
+        for(int i=0; i<whilecount.size(); i++)
+        {
+            func.push_back(whilecount[i].first);
+        }
     }
-    for(int i=0; i<switchcount.size(); i++)
+
+    if(ifcount.size() == 0)
     {
-        func.push_back(switchcount[i].first);
+            func.push_back("if");
     }
+    else
+    {
+        for(int i=0; i<ifcount.size(); i++)
+        {
+            func.push_back(ifcount[i].first);
+        }
+    }
+
+    if(elseifcount.size() == 0)
+    {
+            func.push_back("elseif");
+    }
+    else
+    {
+        for(int i=0; i<elseifcount.size(); i++)
+        {
+            func.push_back(elseifcount[i].first);
+        }
+    }
+
+    if(switchcount.size() == 0)
+    {
+            func.push_back("switch");
+    }
+    else
+    {
+        for(int i=0; i<switchcount.size(); i++)
+        {
+            func.push_back(switchcount[i].first);
+        }
+    }
+
     return func;
 }
 
@@ -1057,9 +1097,11 @@ void comparefunctionoccurrences(vector<string> functionsfile1, vector<string> fu
     map<string, int>:: iterator itf1 = f1.begin();
     for(map<string, int>:: iterator itf2 = f2.begin(); (itf2 != f2.end() && itf1 != f1.end()); itf2++)
     {
+        //cout << "check" << endl;
         if(itf1->first == itf2->first)
         {
             v.push_back(make_pair(itf1->first, fabs(itf1->second - itf2->second)));
+            //cout << itf1->first << " " << itf1->second << " " << itf2->second << endl;
         }
         itf1++;
     }
@@ -1070,6 +1112,7 @@ void comparefunctionoccurrences(vector<string> functionsfile1, vector<string> fu
         int sub;
         name = v[i].first;
         sub = v[i].second;
+        //cout << name << " " << sub << endl;
         if(sub == 0)
         {
             cout << name << " same number of occurrences " << endl;
@@ -1362,7 +1405,7 @@ void compareConditions(string file1, string file2)
 int main(void)
 {
     string filename1, filename2, file1,file2;
-    filename1 = "spl1.cpp";
+    filename1 = "copy.cpp";
     filename2 = "spl1.cpp";
     file1 = makefileinstandardform(filename1, "stan1.txt");
     file2 = makefileinstandardform(filename2, "stan2.txt");
@@ -1378,7 +1421,12 @@ int main(void)
     vector<string> functions2;
     functions1 = getTotalfunctions(file1);
     functions2 = getTotalfunctions(file2);
-
+    /*
+    for(int i=0; i<functions2.size(); i++)
+    {
+        cout << functions2[i] << endl;
+    }
+*/
     comparefunctionoccurrences(functions1, functions2);
 
     compareConditions(file1, file2);
